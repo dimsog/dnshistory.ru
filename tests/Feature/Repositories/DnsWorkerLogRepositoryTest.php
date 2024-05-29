@@ -5,23 +5,17 @@ declare(strict_types=1);
 namespace Tests\Feature\Repositories;
 
 use App\Repositories\DnsWorkerLogRepository;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 final class DnsWorkerLogRepositoryTest extends TestCase
 {
+    use LazilyRefreshDatabase;
+
+
     public function test_increase(): void
     {
-        DB::table('dns_worker_logs')->delete();
-
-        DB::table('dns_worker_logs')
-            ->insert([
-                'date' => '2024-01-01',
-                'server' => 'http://bad-server2',
-                'key' => 'network_error',
-                'errors' => 1
-            ]);
-
         /** @var DnsWorkerLogRepository $repository */
         $repository = $this->app->make(DnsWorkerLogRepository::class);
         $repository->increaseNetworkError('http://bad-server');

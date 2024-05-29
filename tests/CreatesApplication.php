@@ -18,8 +18,6 @@ trait CreatesApplication
         $app->make(Kernel::class)->bootstrap();
 
         Artisan::call('migrate');
-        Artisan::call('app:add-zone ru');
-        Artisan::call('app:add-zone rf');
 
         return $app;
     }

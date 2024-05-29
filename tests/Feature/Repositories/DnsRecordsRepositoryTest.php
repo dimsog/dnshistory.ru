@@ -6,17 +6,14 @@ namespace Tests\Feature\Repositories;
 
 use App\Repositories\DnsRecordsRepository;
 use App\ValueObjects\Domain;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 final class DnsRecordsRepositoryTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        DB::table('ru_d_dns_records')
-            ->delete();
-    }
+    use LazilyRefreshDatabase;
+
 
     public function test_find_all(): void
     {

@@ -6,20 +6,14 @@ namespace Tests\Feature\Repositories;
 
 use App\Repositories\DomainsRepository;
 use App\ValueObjects\Domain;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 final class DomainsRepositoryTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        DB::table('ru_domains')
-            ->delete();
+    use LazilyRefreshDatabase;
 
-        DB::table('rf_domains')
-            ->delete();
-    }
 
     public function test_domain_does_not_exists(): void
     {
