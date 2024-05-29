@@ -43,3 +43,5 @@ services:
           POSTGRES_USER: "dnshistory-test"
           POSTGRES_PASSWORD: "dnshistory-test"
       command: -c 'shared_buffers=512MB' -c 'max_locks_per_transaction=1024'
+      ports:
+          - "5433:5432"

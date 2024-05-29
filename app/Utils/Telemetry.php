@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
+use App\Contracts\TelemetryInterface;
 use App\Monitoring\Services\AdminNotificationService;
 
-final class Telemetry
+final class Telemetry implements TelemetryInterface
 {
     public function __construct(
         private readonly AdminNotificationService $adminNotificationService,

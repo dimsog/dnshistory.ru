@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Contracts\TelemetryInterface;
 use App\Entity\Domain;
 use App\Jobs\DnsJob;
 use App\Repositories\DomainsRepository;
-use App\Utils\Telemetry;
 use Illuminate\Console\Command;
 
 class SendDomainsToImportDnsCommand extends Command
@@ -18,19 +18,21 @@ class SendDomainsToImportDnsCommand extends Command
 
     public function handle(
         DomainsRepository $domainsRepository,
-        Telemetry $telemetry,
-    ): void {
+        TelemetryInterface $telemetry,
+    ): int {
         $count = $domainsRepository->countByZone($this->getZone());
         $progressBar = $this->output->createProgressBar($count);
         $domainsRepository->findAllForImportDnsJob($this->getZone(), function (array $domains) use ($progressBar) {
             foreach ($domains as $domain) {
                 /** @var Domain $domain */
-                DnsJob::dispatch($domain->domain)->onQueue($this->getZone() . '_dns');;
+                DnsJob::dispatch($domain->domain)->onQueue($this->getZone() . '_dns');
                 $progressBar->advance();
             }
         });
         $progressBar->finish();
         $telemetry->send("Добавлено {$count} доменов для зоны {$this->getZone()} в очередь");
+
+        return Command::SUCCESS;
     }
 
     private function getZone(): string

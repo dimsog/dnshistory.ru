@@ -10,21 +10,14 @@ use App\Entity\Dns;
 use App\Repositories\DnsRepository;
 use App\Repositories\DomainsRepository;
 use App\ValueObjects\Domain;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 final class DnsRepositoryTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        DB::table('ru_domains')
-            ->delete();
-        DB::table('ru_d_dns_records')
-            ->delete();
-        DB::table('ru_d_dns')
-            ->delete();
-    }
+    use LazilyRefreshDatabase;
+
 
     public function test_find_all(): void
     {
