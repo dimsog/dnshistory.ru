@@ -27,9 +27,10 @@ final class SendDomainsToImportDnsCommandTest extends TestCase
         $repository = $this->app->make(DomainsRepository::class);
         $repository->add(new Domain('domain.ru'));
         $repository->add(new Domain('domain.com'));
-        $this->artisan('app:dns-import')->assertSuccessful();
+        $this->artisan('app:dns-import', ['zone' => 'ru'])->assertSuccessful();
+        $this->artisan('app:dns-import', ['zone' => 'com'])->assertSuccessful();
 
-        Queue::assertPushedOn('dns', DnsJob::class);
-        Queue::assertPushed(DnsJob::class, 2);
+        Queue::assertPushedOn('ru_dns', DnsJob::class);
+        Queue::assertPushedOn('com_dns', DnsJob::class);
     }
 }
