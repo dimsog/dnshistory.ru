@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  nginx:
+    build:
+      context: docker/nginx
+    environment:
+      - TZ=Europe/Moscow
+    depends_on:
+      - php
+    ports:
+      - "${DOCKER_NGINX_HOST_PORT}:80"
+    volumes:
+      - ./:/app
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    environment:
+      - TZ=Europe/Moscow
+      - XDEBUG_CONFIG="remote_host=${DOCKER_XDEBUG_REMOTE_HOST} remote_enable=1"
+      - PHP_IDE_CONFIG="serverName=Docker"
+    volumes:
+      - ./:/app
+  redis:
+      build:
+          context: .
+          dockerfile: docker/redis/Dockerfile
+      environment:
+          REDIS_PASSWORD: "redis"
+  dnshistory-db-postgres:
+      image: postgres:15
+      environment:
+          POSTGRES_DB: "dnshistory"
+          POSTGRES_USER: "dnshistory"
+          POSTGRES_PASSWORD: "dnshistory"
+      command: -c 'shared_buffers=512MB' -c 'max_locks_per_transaction=1024'
+      ports:
+          - "5432:5432"
+  dnshistory-db-postgres-testing:
+      image: postgres:15
+      environment:
+          POSTGRES_DB: "dnshistory-test"
+          POSTGRES_USER: "dnshistory-test"
+          POSTGRES_PASSWORD: "dnshistory-test"
+      command: -c 'shared_buffers=512MB' -c 'max_locks_per_transaction=1024'
