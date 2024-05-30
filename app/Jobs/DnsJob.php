@@ -39,10 +39,12 @@ final class DnsJob implements ShouldQueue
         try {
             $domain = $domainsRepository->findDomain($this->domain);
             $dns = $dnsLoader->load($domain);
-            $dnsRepository->addOrIgnore(
-                domain: $domain,
-                dns: $dns,
-            );
+            if ($dns !== null) {
+                $dnsRepository->addOrIgnore(
+                    domain: $domain,
+                    dns: $dns,
+                );
+            }
         } catch (RuntimeException) {
             // nothing
             return;
