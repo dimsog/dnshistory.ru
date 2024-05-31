@@ -10,7 +10,7 @@ final class Whois
 {
     public function __construct(
         public readonly DateTimeImmutable $createdAt,
-        public readonly DateTimeImmutable $paidTill,
+        public readonly ?DateTimeImmutable $paidTill,
         public readonly string $registrar,
         public readonly array $nameServers,
         public readonly array $states,

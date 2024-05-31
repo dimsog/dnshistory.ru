@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V2;
 
+use App\Actions\LoadWhoisAction;
 use App\Converters\SiteAvailabilityToArrayConverter;
 use App\Entity\SiteAvailability;
 use App\Services\SiteAvailabilityLoader;
@@ -18,7 +19,6 @@ use App\Repositories\DnsRepository;
 use App\Repositories\DomainsRepository;
 use App\Repositories\DomainZonesRepository;
 use App\Services\DnsLoader;
-use App\Services\WhoisLoader;
 use App\Utils\Telemetry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -33,9 +33,9 @@ final class DnsController extends Controller
         private readonly DomainZonesRepository $domainZonesRepository,
         private readonly Telemetry $telemetry,
         private readonly DnsLoader $dnsLoader,
-        private readonly WhoisLoader $whoisLoader,
         private readonly SiteAvailabilityLoader $siteAvailabilityLoader,
         private readonly SiteAvailabilityToArrayConverter $siteAvailabilityToArrayConverter,
+        private readonly LoadWhoisAction $loadWhoisAction,
     ) {
     }
 
@@ -51,11 +51,12 @@ final class DnsController extends Controller
 
             $domain = $this->domainsRepository->findOrCreate($request->getDomain());
 
-            $whoisLoadingResult = $this->whoisLoader->load($request->getDomain());
+            [$whois, $whoisErrorText] = $this->loadWhoisAction->handle($request->getDomain());
+
             $currentDns = $this->dnsLoader->load($domain);
             $dnsItems = $this->dnsRepository->findAllByDomain($domain);
 
-            if ($whoisLoadingResult->whois == null || $currentDns == null) {
+            if ($whois == null || $currentDns == null) {
                 $siteAvailability = new SiteAvailability(
                     domainId: 0,
                     date: now(),
@@ -67,8 +68,8 @@ final class DnsController extends Controller
             }
 
             return ApiResponse::success([
-                'whois' => $whoisLoadingResult->whois == null ? null : $this->whoisToArrayConverter->convert($whoisLoadingResult->whois),
-                'whoisErrorText' => $whoisLoadingResult->errorText,
+                'whois' => $whois == null ? null : $this->whoisToArrayConverter->convert($whois),
+                'whoisErrorText' => $whoisErrorText,
 
                 'currentDns' => $currentDns == null ? null : $this->dnsToArrayConverter->convert($currentDns),
 
