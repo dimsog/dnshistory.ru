@@ -28,7 +28,6 @@ class MigrateDataCommand extends Command
                 foreach ($domains as $domain) {
                     /** @var Domain $domain */
                     try {
-                        DB::beginTransaction();
                         if (\App\Models\Domain::query()->where('name', $domain->domain->name)->exists()) {
                             $this->output->warning("{$domain->domain->name} already exists. Skipped.");
                             continue;
@@ -56,11 +55,9 @@ class MigrateDataCommand extends Command
                                 $dnsRecordModel->save();
                             }
                         }
-                        DB::commit();
                         $this->output->writeln($domainModel->name . ' OK');
                     } catch (\Throwable $e) {
                         $this->error($e->getMessage());
-                        DB::rollBack();
                         throw $e;
                     }
                 }
