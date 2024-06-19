@@ -22,8 +22,8 @@ final class CreateSiteAvailabilityTableCommand extends Command
         foreach ($zones as $zone) {
             $this->output->writeln($zone->name);
             foreach ($this->getLetters() as $letter) {
-                if (!Schema::hasTable("{$zone}_{$letter}_site_availability")) {
-                    Schema::create("{$zone}_{$letter}_site_availability", static function (Blueprint $table): void {
+                if (!Schema::hasTable("{$zone->name}_{$letter}_site_availability")) {
+                    Schema::create("{$zone->name}_{$letter}_site_availability", static function (Blueprint $table): void {
                         $table->integer('id')->autoIncrement();
                         $table->integer('domain_id')->index();
                         $table->integer('date');
