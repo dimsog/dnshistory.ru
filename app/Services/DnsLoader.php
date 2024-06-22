@@ -72,9 +72,7 @@ final class DnsLoader
                 records: $records,
             );
         } catch (Throwable $e) {
-            Log::error($e->getMessage(), [
-                'exception' => $e,
-            ]);
+            // nothing
             return null;
         }
     }
