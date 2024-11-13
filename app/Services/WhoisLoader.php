@@ -34,8 +34,13 @@ final class WhoisLoader
                 throw new LoadWhoisErrorException("Не удалось загрузить информацию по домену");
             }
 
+            $createdAt = null;
+            if (!empty($domainInfo->creationDate)) {
+                $createdAt = (new DateTimeImmutable())->setTimestamp($domainInfo->creationDate);
+            }
+
             return new Whois(
-                createdAt: (new DateTimeImmutable())->setTimestamp($domainInfo->creationDate),
+                createdAt: $createdAt,
                 paidTill: $domainInfo->expirationDate > 0 ? (new DateTimeImmutable())->setTimestamp($domainInfo->expirationDate) : null,
                 registrar: $domainInfo->registrar,
                 nameServers: $domainInfo->nameServers,

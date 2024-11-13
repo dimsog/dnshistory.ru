@@ -9,7 +9,7 @@ use DateTimeImmutable;
 final class Whois
 {
     public function __construct(
-        public readonly DateTimeImmutable $createdAt,
+        public readonly ?DateTimeImmutable $createdAt,
         public readonly ?DateTimeImmutable $paidTill,
         public readonly string $registrar,
         public readonly array $nameServers,

@@ -17,7 +17,7 @@
                             <strong>whois</strong>
                         </div>
                         <div>
-                            <span title="Дата регистрации домена">{{ whois.created_at_ru }}</span> - <span title="До какой даты оплачен домен">{{ whois.paid_till_ru ?? 'неизвестно' }}</span>
+                            <span title="Дата регистрации домена">{{ createdDate }}</span> - <span title="До какой даты оплачен домен">{{ whois.paid_till_ru ?? 'неизвестно' }}</span>
                         </div>
                     </div>
                     <div class="whois-registrar">
@@ -27,7 +27,7 @@
 
                 <div v-if="showMoreInfo">
                     <ul class="moreinfo-list">
-                        <li><span>дата регистрации:</span> {{ whois.created_at_ru }}</li>
+                        <li><span>дата регистрации:</span> {{ createdDate }}</li>
                         <li><span>дата окончания:</span> {{ whois.paid_till_ru ?? 'неизвестно' }}</li>
                         <li><span>регистратор:</span> {{ whois.registrar }}</li>
                         <li v-for="ns in whois.name_servers"><span>nserver:</span> {{ ns }}</li>
@@ -109,6 +109,14 @@ export default defineComponent({
     methods: {
         onShowMoreInfo() {
             this.showMoreInfo = !this.showMoreInfo;
+        }
+    },
+    computed: {
+        createdDate(): string {
+            if (this.whois?.created_at === undefined || this.whois.created_at === null) {
+                return '(неизвестно)';
+            }
+            return this.whois.created_at_ru
         }
     }
 })
