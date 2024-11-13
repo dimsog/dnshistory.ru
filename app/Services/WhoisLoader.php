@@ -35,8 +35,9 @@ final class WhoisLoader
             }
 
             $createdAt = null;
-            if (!empty($domainInfo->creationDate)) {
-                $createdAt = (new DateTimeImmutable())->setTimestamp($domainInfo->creationDate);
+            $creationDate = $domainInfo->creationDate;
+            if (!empty($creationDate)) {
+                $createdAt = (new DateTimeImmutable())->setTimestamp($creationDate);
             }
 
             return new Whois(
